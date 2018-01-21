@@ -18,9 +18,6 @@ class WC_Boleto_Siccob_Admin {
 		// Save Metabox.
 		add_action( 'save_post', array( $this, 'save' ) );
 
-		// Update.
-		add_action( 'admin_init', array( $this, 'update' ), 5 );
-
 		// Load scripts in gateway settings page.
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 	}
@@ -164,31 +161,6 @@ class WC_Boleto_Siccob_Admin {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			wp_enqueue_script( 'wc-boleto-admin', plugins_url( 'assets/js/admin' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery' ), WC_Boleto::VERSION, true );
-		}
-	}
-
-	/**
-	 * Performance an update to all options.
-	 */
-	public function update() {
-		$db_version = get_option( 'woocommerce_boleto_db_version' );
-		$version    = WC_Boleto::VERSION;
-
-		// Update to 1.2.2.
-		if ( version_compare( $db_version, '1.2.2', '<' ) ) {
-			// Delete boleto page.
-			$boleto_post = get_page_by_path( 'boleto' );
-			if ( $boleto_post ) {
-				wp_delete_post( $boleto_post->ID, true );
-			}
-
-			// Flush urls.
-			WC_Boleto::activate();
-		}
-
-		// Update the db version.
-		if ( $db_version != $version ) {
-			update_option( 'woocommerce_boleto_db_version', $version );
 		}
 	}
 }
